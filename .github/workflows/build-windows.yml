@@ -1,0 +1,34 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install PyQt6 python-docx pyinstaller
+
+      - name: Construir .exe
+        run: |
+          pyinstaller --onefile --windowed --name "MD_Toolkit" md_toolkit.py
+
+      - name: Subir .exe como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: MD_Toolkit_Windows
+          path: dist/MD_Toolkit.exe
+          retention-days: 30
